@@ -42,7 +42,7 @@ namespace Play.Identity.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateByIdAsync(UpdateUserDto updateUser)
         {
-            ApplicationUser user = await userManager.FindByIdAsync(updateUser.ToString());
+            ApplicationUser user = await userManager.FindByIdAsync(updateUser.Id.ToString());
             if (user == null)
                 return NotFound();
 
