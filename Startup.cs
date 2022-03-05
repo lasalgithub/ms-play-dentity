@@ -58,6 +58,8 @@ namespace Play.Identity
                 .AddInMemoryApiResources(identityServerSettings.ApiResources)
                 .AddDeveloperSigningCredential();
 
+            services.AddLocalApiAuthentication();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
