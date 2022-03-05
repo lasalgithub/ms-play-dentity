@@ -55,6 +55,7 @@ namespace Play.Identity
                 .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
                 .AddInMemoryClients(identityServerSettings.Clients)
                 .AddInMemoryIdentityResources(identityServerSettings.IdentityResources)
+                .AddInMemoryApiResources(identityServerSettings.ApiResources)
                 .AddDeveloperSigningCredential();
 
             services.AddControllers();
