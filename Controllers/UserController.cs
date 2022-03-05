@@ -13,7 +13,7 @@ namespace Play.Identity.Controllers
 
     [ApiController]
     [Route("user")]
-    [Authorize(Policy = LocalApi.PolicyName)]
+    [Authorize(Policy = LocalApi.PolicyName, Roles = Roles.Admin)]
     public class UserController : ControllerBase
     {
         private UserManager<ApplicationUser> userManager;
