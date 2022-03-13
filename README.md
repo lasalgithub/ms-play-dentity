@@ -9,10 +9,16 @@ $env:GH_PAT="[GithubPersonalToken]"
 docker build --secret id=GH_OWNER --secret id=GH_PAT -t play.identity:$version
 ```
 
-### Build docker image - windows
+### Build docker image - linux
 ```s
 VERSION=1.0.0
 export GH_OWNER="playhuborg"
 export GH_PAT="[GithubPersonalToken]"
 docker build --no-cache --progress=plain --secret id=GH_OWNER --secret id=GH_PAT   -t play.identity:$VERSION .
+```
+
+### Run the docker image
+```s
+ADMIN_PASSWORD=[Admin Pwd]
+docker run -it --rm -p 5002:5002 --name identity -e MongoDbSettings__Host=mongo -e IdentitySettings__AdminUserPassword=$ADMIN_PASSWORD --network playinfra_default play.identity:$VERSION
 ```
