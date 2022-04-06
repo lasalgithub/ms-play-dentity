@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Play.Identity.Entities;
+using Play.Identity.Services;
 using static IdentityServer4.IdentityServerConstants;
 
 namespace Play.Identity.Controllers
@@ -16,18 +17,17 @@ namespace Play.Identity.Controllers
     [Authorize(Policy = LocalApi.PolicyName, Roles = Roles.Admin)]
     public class UserController : ControllerBase
     {
-        private UserManager<ApplicationUser> userManager;
-        public UserController(UserManager<ApplicationUser> userManager)
+        private IUserServices _userServices;
+
+        public UserController(IUserServices userServices)
         {
-            this.userManager = userManager;
+            _userServices = userServices;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<UserDto>> Get()
         {
-            IEnumerable<UserDto> users = userManager.Users
-            .ToList()
-            .Select(user => user.AsDto());
+            var users = _userServices.GetUsers();
 
             return Ok(users);
         }
@@ -35,36 +35,29 @@ namespace Play.Identity.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetByIdAsync(Guid id)
         {
-            UserDto user = (await userManager.FindByIdAsync(id.ToString())).AsDto();
+            UserDto user = await _userServices.GetUserByIdAsync(id);
             if (user == null)
-                return NotFound();
+                return NotFound($"User cannot be found with id: '{id}'");
 
             return Ok(user);
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateByIdAsync(UpdateUserDto updateUser)
+        public async Task<ActionResult> UpdateAsync(UpdateUserDto updateUser)
         {
-            ApplicationUser user = await userManager.FindByIdAsync(updateUser.Id.ToString());
-            if (user == null)
-                return NotFound();
-
-
-            user.Email = updateUser.Email;
-            user.Cash = updateUser.Cash;
-            await userManager.UpdateAsync(user);
+            var updatedUserStatus = await _userServices.UpdateUserAsync(updateUser);
+            if (updatedUserStatus == null)
+                return NotFound($"User cannot be found with id: '{updateUser.Id}'");
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> UpdateByIdAsync(Guid id)
+        public async Task<ActionResult> DeleteByIdAsync(Guid id)
         {
-            ApplicationUser user = await userManager.FindByIdAsync(id.ToString());
-            if (user == null)
-                return NotFound();
-
-            await userManager.DeleteAsync(user);
+            var deleteStatus = await _userServices.DeleteUserByIdAsync(id);
+            if (deleteStatus == null)
+                return NotFound($"User cannot be found with id: '{id}'");
 
             return NoContent();
         }

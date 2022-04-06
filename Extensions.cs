@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Play.Identity.Entities;
+using Play.Identity.Services;
 
 namespace Play.Identity
 {
@@ -13,6 +15,13 @@ namespace Play.Identity
                 user.CreatedOn,
                 user.Cash
             );
+        }
+
+        public static IServiceCollection RegisterServices(this IServiceCollection services)
+        {
+            services.AddTransient<IUserServices, UserServices>();
+
+            return services;
         }
     }
 }

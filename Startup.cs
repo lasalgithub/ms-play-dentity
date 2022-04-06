@@ -72,6 +72,7 @@ namespace Play.Identity
 
             services.AddLocalApiAuthentication();
 
+            services.RegisterServices();
             services.AddControllers();
             services.AddHostedService<IdentitySeedHostedService>();
             services.AddSwaggerGen(c =>
