@@ -18,6 +18,9 @@ using Play.Common.Settings;
 using Play.Identity.Entities;
 using Play.Identity.HostedServices;
 using Play.Identity.Settings;
+using Play.Common.MassTransit;
+using GreenPipes;
+using Play.Inventory.Exceptions;
 
 namespace Play.Identity
 {
@@ -46,6 +49,13 @@ namespace Play.Identity
                     mongoDBSettings.ConnectionString,
                     serviceSettings.ServiceName
                 );
+
+            services.AddMassTransitWithRabbitMQ(retryConfigurator =>
+            {
+                retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+                retryConfigurator.Ignore(typeof(UnknownUserException));
+                retryConfigurator.Ignore(typeof(InsufficientFundsException));
+            });
 
             services.AddIdentityServer(options =>
                 {
